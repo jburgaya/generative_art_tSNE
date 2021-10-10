@@ -96,7 +96,7 @@ make_tsne_plots(groups = 10, sd = 0) |
 t-SNE depends on the random seed, so if we generate the same plot multiple times we get different results.
 
 ```{r}
-make_tsne_plots(groups = 10, sd = 0.05, perplexity = 1) # |
-  # make_tsne_plots(groups = 10, sd = 0.05, perplexity = 10) |
-  # make_tsne_plots(groups = 10, sd = 0.05, perplexity = 50)
+make_tsne_plots(groups = 10, sd = 0.05, perplexity = 10) |
+  make_tsne_plots(groups = 10, sd = 0.05, perplexity = 10) |
+  make_tsne_plots(groups = 10, sd = 0.05, perplexity = 10)
 ```
