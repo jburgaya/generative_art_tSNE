@@ -1,6 +1,6 @@
 ---
 title: "Generative art using t-SNE"
-author: "JBV"
+author: "JBV" | from @ClausWilke 
 date: "10/10/2021"
 output: html_document
 ---
