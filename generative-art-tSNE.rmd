@@ -57,6 +57,7 @@ setup() %>% # data coords init
 ```
 
 Making different output plots | efficiently: defining a funciton {make_tsne_plots()} that takes a few key parameters and returns the corresponding plot as a result.
+
 ```{r}
 make_tsne_plots <- function(groups = 10, n = 200, sd = 0, perplexity = 5) {
   setup(groups = groups, n = n, sd = sd) %>%
