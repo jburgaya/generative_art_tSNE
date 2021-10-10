@@ -1,0 +1,101 @@
+---
+title: "Generative art using t-SNE"
+author: "JBV"
+date: "10/10/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Creating a few vertical streep points.
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(viridisLite)
+library(viridis)
+
+setup <- function(groups = 10, n = 500, sd = .05) {
+  tibble(
+    x = rep(1:groups, each = n) + rnorm(groups*n, sd = sd),
+    y = rep(seq(from = 0, to = 10, lenght.out = n), groups) +
+      rnorm(groups*n, sd = sd),
+    group = rep(letters[1:groups], each = n)
+  )
+}
+
+setup() %>%
+  ggplot(aes(x, y, color = group)) +
+  geom_point() +
+  scale_color_viridis_d(option = "E", guide = "none")
+```
+
+Running the t-SNE algorithm
+
+```{r}
+library(Rtsne)
+
+do_tsne <- function(coords, perplexity = 300) {
+  tsne_fit <- coords %>%
+    select(x, y) %>%
+    scale() %>%
+    Rtsne(perplexity = perplexity, max_iter = 500, check_duplicates = FALSE)
+  
+    tsne_fit$Y %>%
+      as.data.frame() %>%
+      cbind(select(coords, -x, -y))
+}
+
+setup() %>% # data coords init
+  do_tsne() %>%
+  ggplot(aes(V1, V2, color = group)) +
+  geom_point() +
+  scale_color_viridis_d(option = "E", guide = "none") +
+  coord_fixed() + theme_void()
+```
+
+Making different output plots | efficiently: defining a funciton {make_tsne_plots()} that takes a few key parameters and returns the corresponding plot as a result.
+```{r}
+make_tsne_plots <- function(groups = 10, n = 200, sd = 0, perplexity = 5) {
+  setup(groups = groups, n = n, sd = sd) %>%
+    do_tsne(perplexity) %>%
+    ggplot(aes(V1, V2, color = group)) +
+    geom_point() +
+    scale_color_viridis_d(option = "E", guide = "none") +
+    coord_fixed() + theme_void() +
+    theme(
+      plot.margin = margin(20, 20, 20, 20),
+      panel.border = element_rect(color = "black", fill = NA)
+    )
+}
+
+make_tsne_plots(groups = 10, sd = 0)
+```
+
+To influence the amount of intersections == modify the perplexity
+
+```{r}
+library(patchwork)
+
+make_tsne_plots(groups = 5, sd = 0, perplexity = 2) |
+  make_tsne_plots(groups = 5, sd = 0, perplexity = 50) |
+  make_tsne_plots(groups = 5, sd = 0, perplexity = 150)
+```
+
+To influence the smoothness of the paths == modify the amount of noise applied
+
+```{r}
+make_tsne_plots(groups = 10, sd = 0) |
+  make_tsne_plots(groups = 10, sd = 0.05) |
+  make_tsne_plots(groups = 10, sd = 0.5)
+```
+
+t-SNE depends on the random seed, so if we generate the same plot multiple times we get different results.
+
+```{r}
+make_tsne_plots(groups = 10, sd = 0, perplexity = 12) |
+  make_tsne_plots(groups = 10, sd = 0, perplexity = 12) |
+  make_tsne_plots(groups = 10, sd = 0, perplexity = 12)
+```
