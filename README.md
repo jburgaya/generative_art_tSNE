@@ -1,5 +1,5 @@
 # generative-art-tSNE
 
-Generative art try out using the algorithm t-distributed stochastic neighbor embedding (t-SNE).
+Trying out some generative art using the algorithm t-distributed stochastic neighbor embedding (t-SNE).
 
-Based on @ClausWilke
+Based on @ClausWilke 
